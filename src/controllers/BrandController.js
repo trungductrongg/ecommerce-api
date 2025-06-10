@@ -1,3 +1,6 @@
+import { Sequelize } from "sequelize";
+import db from "../models";
+
 export async function getBrands(req, res) {
   res.status(200).json({
     message: "Get brands successfully",
@@ -11,9 +14,18 @@ export async function getBrandById(req, res) {
 }
 
 export async function insertBrand(req, res) {
-  res.status(200).json({
-    message: "Insert brand successfully",
-  });
+  try {
+    const brand = await db.Brand.create(req.body);
+    res.status(201).json({
+      message: "Insert brand successfully",
+      data: brand,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Insert brand failed",
+      error: error.message,
+    });
+  }
 }
 
 export async function updateBrand(req, res) {

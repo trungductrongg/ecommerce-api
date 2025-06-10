@@ -1,6 +1,4 @@
 import express from "express";
-import dotenv from "dotenv";
-dotenv.config();
 import productRoutes from "./routes/product.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import brandRoutes from "./routes/brand.routes.js";

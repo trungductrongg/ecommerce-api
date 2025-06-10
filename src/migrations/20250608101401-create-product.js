@@ -11,12 +11,21 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        unique: true,
       },
       price: {
         type: Sequelize.INTEGER,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
       },
       oldprice: {
         type: Sequelize.INTEGER,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
       },
       image: {
         type: Sequelize.TEXT,
@@ -29,9 +38,17 @@ module.exports = {
       },
       buyturn: {
         type: Sequelize.INTEGER,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
       },
       quantity: {
         type: Sequelize.INTEGER,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
       },
       brand_id: {
         type: Sequelize.INTEGER,

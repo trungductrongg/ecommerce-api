@@ -19,17 +19,17 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+  NewsDetail.init(
+    {
+      product_id: DataTypes.INTEGER,
+      news_id: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "NewsDetail",
+      tableName: "news_details",
+      underscored: true,
+    }
+  );
+  return NewsDetail;
 };
-NewsDetail.init(
-  {
-    product_id: DataTypes.INTEGER,
-    news_id: DataTypes.INTEGER,
-  },
-  {
-    sequelize,
-    modelName: "NewsDetail",
-    tableName: "news_details",
-    underscored: true,
-  }
-);
-return NewsDetail;

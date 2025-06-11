@@ -5,8 +5,10 @@ const asyncHandler = (fun) => {
     } catch (error) {
       return res.status(500).json({
         message: "Internal Server Error",
-        error: error.errors[0]?.message,
-        // error: process.env.NODE_ENV === "development" ? error : "",
+        error:
+          process.env.NODE_ENV === "development"
+            ? error.errors[0]?.message
+            : "",
       });
     }
   };

@@ -1,6 +1,6 @@
 /*
 
-select * from information_schema.table_constraints where table_schema = 'shopapp' and table_name = 'orders';
+select * from information_schema.table_constraints where table_schema = 'shopapp' and table_name = 'products';
 npx sequelize-cli init
 npx sequelize-cli model:generate --name users --attributes email:string,password:string,role:integer,phone:integer,created_at:date,updated_at:date
 npx sequelize-cli model:generate --name category --attributes name:string,image:text

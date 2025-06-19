@@ -1,41 +1,86 @@
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import db from "../models";
 
 export async function getBrands(req, res) {
-  res.status(200).json({
-    message: "Get brands successfully",
+  const { search = "", page = 1 } = req.query;
+  const pageSize = 5;
+  const offset = (page - 1) * pageSize;
+
+  let whereClause = {};
+  if (search.trim() !== "") {
+    whereClause = {
+      [Op.or]: {
+        name: { [Op.like]: `%${search}%` },
+      },
+    };
+  }
+  const [brands, totalBrands] = await Promise.all([
+    db.Brand.findAll({
+      where: whereClause,
+      limit: pageSize,
+      offset: offset,
+    }),
+    db.Brand.count({
+      where: whereClause,
+    }),
+  ]);
+  return res.status(200).json({
+    message: "Get brands success",
+    data: brands,
+    current_page: parseInt(page, 10),
+    total_pages: Math.ceil(totalBrands / pageSize),
+    total_categories: totalBrands,
   });
 }
 
 export async function getBrandById(req, res) {
-  res.status(200).json({
+  const { id } = req.params;
+  const brand = await db.Brand.findByPk(id);
+  if (!brand) {
+    return res.status(404).json({
+      message: "brand not found",
+    });
+  }
+  return res.status(200).json({
     message: "Get brand successfully",
+    data: brand,
   });
 }
 
 export async function insertBrand(req, res) {
-  try {
-    const brand = await db.Brand.create(req.body);
-    res.status(201).json({
-      message: "Insert brand successfully",
-      data: brand,
+  const brand = await db.Brand.create(req.body);
+  res.status(201).json({
+    message: "Insert brand successfully",
+    data: brand,
+  });
+}
+
+export async function updateBrand(req, res) {
+  const { id } = req.params;
+  const updateBrand = await db.Brand.update(req.body, {
+    where: { id },
+  });
+  if (updateBrand[0] > 0) {
+    return res.status(200).json({
+      message: "Update brand successfully",
     });
-  } catch (error) {
-    res.status(500).json({
-      message: "Insert brand failed",
-      error: error.message,
+  } else {
+    return res.status(404).json({
+      message: "Brand not found",
     });
   }
 }
 
-export async function updateBrand(req, res) {
-  res.status(200).json({
-    message: "Update brand successfully",
-  });
-}
-
 export async function deleteBrand(req, res) {
-  res.status(200).json({
-    message: "Delete brand successfully",
-  });
+  const { id } = req.params;
+  const deleted = await db.Brand.destroy({ where: { id } });
+  if (deleted) {
+    return res.status(200).json({
+      message: "Delete brand successfully",
+    });
+  } else {
+    res.status(404).json({
+      message: "Brand not found",
+    });
+  }
 }

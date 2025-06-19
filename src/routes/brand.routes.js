@@ -1,12 +1,13 @@
 import express from "express";
 import * as BrandController from "../controllers/BrandController.js";
+import asyncHandler from "../middlewares/asyncHandler.js";
 
 const router = express.Router();
 
-router.get("/", BrandController.getBrands);
-router.get("/:id", BrandController.getBrandById);
-router.post("/", BrandController.insertBrand);
-router.put("/:id", BrandController.updateBrand);
-router.delete("/:id", BrandController.deleteBrand);
+router.get("/", asyncHandler(BrandController.getBrands));
+router.get("/:id", asyncHandler(BrandController.getBrandById));
+router.post("/", asyncHandler(BrandController.insertBrand));
+router.put("/:id", asyncHandler(BrandController.updateBrand));
+router.delete("/:id", asyncHandler(BrandController.deleteBrand));
 
 export default router;

@@ -1,7 +1,9 @@
 import { Sequelize, Op, where } from "sequelize";
 import db from "../models";
+import insertUserRequest from "../dtos/requests/user/inserUserRequest";
+import ResponseUser from "../dtos/responses/user/ResponseUser";
 
-export async function getProducts(req, res) {
+export async function getUsers(req, res) {
   const { search = "", page = 1 } = req.query;
   const pageSize = 5;
   const offset = (page - 1) * pageSize;
@@ -18,12 +20,12 @@ export async function getProducts(req, res) {
   }
 
   const [products, totalProducts] = await Promise.all([
-    db.Product.findAll({
+    db.User.findAll({
       where: whereClause,
       limit: pageSize,
       offset: offset,
     }),
-    db.Product.count({
+    db.User.count({
       where: whereClause,
     }),
   ]);
@@ -37,7 +39,7 @@ export async function getProducts(req, res) {
   });
 }
 
-export async function getProductById(req, res) {
+export async function getUserById(req, res) {
   const { id } = req.params;
   const product = await db.Product.findByPk(id);
   if (!product) {
@@ -51,42 +53,57 @@ export async function getProductById(req, res) {
   });
 }
 
-export async function insertProduct(req, res) {
-  const product = await db.Product.create(req.body);
-  res.status(201).json({
-    message: "Insert product successfully",
-    data: product,
+export async function insertUser(req, res) {
+  const existingUser = await db.User.findOne({
+    where: { email: req.body.email },
   });
-}
+  if (existingUser) {
+    return res.status(409).json({
+      message: "Email already exists",
+    });
+  }
 
-export async function updateProduct(req, res) {
-  const { id } = req.params;
-  const updateProduct = await db.Product.update(req.body, {
-    where: { id },
-  });
-  if (updateProduct[0] > 0) {
-    return res.status(200).json({
-      message: "Update product successfully",
+  const user = await db.User.create(new insertUserRequest(req.body));
+  if (user) {
+    return res.status(201).json({
+      message: "Insert User Successfully",
+      data: new ResponseUser(user),
     });
   } else {
-    return res.status(404).json({
-      message: "Product not found",
+    res.status(400).json({
+      message: "Insert User Error",
     });
   }
 }
 
-export async function deleteProduct(req, res) {
+export async function updateUser(req, res) {
   const { id } = req.params;
-  const deleted = await db.Product.destroy({
+  const [updated] = await db.User.update(req.body, {
+    where: { id },
+  });
+  if (updated) {
+    return res.status(200).json({
+      message: "Update User Successfully",
+    });
+  } else {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+}
+
+export async function deleteUser(req, res) {
+  const { id } = req.params;
+  const deleted = await db.User.destroy({
     where: { id },
   });
   if (!deleted) {
     return res.status(404).json({
-      message: "Product not found",
+      message: "User not found",
     });
   } else {
     return res.status(200).json({
-      message: "Delete product successfully",
+      message: "Delete user successfully",
     });
   }
 }

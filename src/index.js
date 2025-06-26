@@ -33,18 +33,66 @@ yarn add --dev @babel/core @babel/node @babel/preset-env
 
 import express from "express";
 import dotenv from "dotenv";
+import db from "./models";
+const os = require("os");
 // const express = require("express");
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 express.urlencoded({ extended: true });
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+
+  next();
+});
 
 import { AppRoute } from "./AppRoute";
 
 app.get("/", (req, res) => {
   // http://localhost:3000/products
   res.send("Hello World!!!!");
+});
+
+app.get("/api/healthcheck", async (req, res) => {
+  try {
+    await db.sequelize.authenticate();
+
+    const cpuLoad = os.loadavg();
+    const cpus = os.cpus();
+    const cpuPercentage = (cpuLoad[0] / cpus.length) * 100;
+
+    const memoryUsage = process.memoryUsage();
+    const toMB = (bytes) => (bytes / 1024 / 1024).toFixed(2) + " MB";
+
+    res.status(200).json({
+      status: "OK",
+      database: "Connected",
+      cpuLoad: {
+        "1min": cpuLoad[0].toFixed(2),
+        "5min": cpuLoad[1].toFixed(2),
+        "15min": cpuLoad[2].toFixed(2),
+        percentage: cpuPercentage.toFixed(2) + "%",
+      },
+      memoryUsage: {
+        rss: toMB(memoryUsage.rss),
+        heapTotal: toMB(memoryUsage.heapTotal),
+        heapUsed: toMB(memoryUsage.heapUsed),
+        external: toMB(memoryUsage.external),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "Failed",
+      message: "Health check failed",
+      error: error.message,
+    });
+  }
 });
 
 const port = process?.env?.PORT ?? 3000;

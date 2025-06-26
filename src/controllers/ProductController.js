@@ -28,7 +28,7 @@ export async function getProducts(req, res) {
     }),
   ]);
 
-  res.status(200).json({
+  return res.status(200).json({
     message: "Success",
     data: products,
     current_pages: parseInt(page, 10),

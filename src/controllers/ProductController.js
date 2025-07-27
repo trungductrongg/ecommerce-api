@@ -39,7 +39,9 @@ export async function getProducts(req, res) {
 
 export async function getProductById(req, res) {
   const { id } = req.params;
-  const product = await db.Product.findByPk(id);
+  const product = await db.Product.findByPk(id, {
+    include: [{ model: db.ProductImage, as: "product_image" }],
+  });
   if (!product) {
     return res.status(404).json({
       message: "Product not found",
@@ -52,6 +54,14 @@ export async function getProductById(req, res) {
 }
 
 export async function insertProduct(req, res) {
+  const { name } = req.body;
+  const existingProduct = await db.Product.findOne({ where: { name } });
+  if (existingProduct) {
+    return res.status(409).json({
+      message: "Product name already exists",
+    });
+  }
+
   const product = await db.Product.create(req.body);
   res.status(201).json({
     message: "Insert product successfully",

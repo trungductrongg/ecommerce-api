@@ -48,6 +48,15 @@ export async function getBrandById(req, res) {
 }
 
 export async function insertBrand(req, res) {
+  const { name } = req.body;
+  const existing = await db.Brand.findOne({ where: { name: name.trim() } });
+  if (existing) {
+    return res.status(409).json({
+      message: "Insert Brand Failed",
+      error: "Brand with the same name already exists",
+    });
+  }
+
   const brand = await db.Brand.create(req.body);
   res.status(201).json({
     message: "Insert brand successfully",
@@ -57,6 +66,16 @@ export async function insertBrand(req, res) {
 
 export async function updateBrand(req, res) {
   const { id } = req.params;
+  const { name } = req.body;
+  if (name !== undefined) {
+    const existing = await db.Brand.findOne({ where: { name: name.trim() } });
+    if (existing) {
+      return res.status(409).json({
+        message: "Insert Brand Failed",
+        error: "Brand with the same name already exists",
+      });
+    }
+  }
   const updateBrand = await db.Brand.update(req.body, {
     where: { id },
   });

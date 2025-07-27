@@ -2,8 +2,8 @@
 
 select * from information_schema.table_constraints where table_schema = 'shopapp' and table_name = 'products';
 npx sequelize-cli init
-npx sequelize-cli model:generate --name users --attributes email:string,password:string,role:integer,phone:integer,created_at:date,updated_at:date
-npx sequelize-cli model:generate --name category --attributes name:string,image:text
+npx sequelize-cli model:generate --name User --attributes email:string,password:string,role:integer,avatar:text,phone:integer,created_at:date,updated_at:date
+npx sequelize-cli model:generate --name Category --attributes name:string,image:text
 npx sequelize-cli model:generate --name Brand --attributes name:string,image:text
 npx sequelize-cli model:generate --name News --attributes title:string,image:text,content:text
 npx sequelize-cli model:generate --name Banner --attributes name:string,image:text,status:integer
@@ -13,9 +13,11 @@ npx sequelize-cli model:generate --name OderDetail --attributes oder_id:integer,
 npx sequelize-cli model:generate --name BannerDetail --attributes product_id:integer,banner_id:integer
 npx sequelize-cli model:generate --name Feedback --attributes product_id:integer,user_id:integer,star:integer,comment:text
 npx sequelize-cli model:generate --name NewsDetail2 --attributes product_id:integer,news_id:integer
+npx sequelize-cli model:generate --name ProductImage --attributes product_id:integer,image:text
 
 Run Migration
 npx sequelize-cli db:migrate
+npx sequelize-cli db:migrate --config src/config/config.js
 
 Reverse Migration
 npx sequelize-cli db:migrate:undo

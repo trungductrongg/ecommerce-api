@@ -4,6 +4,7 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 import validate from "../middlewares/validate.js";
 import InsertProductRequest from "../dtos/requests/product/InsertProductRequest.js";
 import updateProductRequest from "../dtos/requests/product/UpdateProductRequest.js";
+import validateImageExists from "../middlewares/validateImageExists.js";
 
 const router = express.Router();
 
@@ -12,11 +13,13 @@ router.get("/:id", asyncHandler(ProductController.getProductById));
 router.post(
   "/",
   validate(InsertProductRequest),
+  validateImageExists,
   asyncHandler(ProductController.insertProduct)
 );
 router.put(
   "/:id",
   validate(updateProductRequest),
+  validateImageExists,
   asyncHandler(ProductController.updateProduct)
 );
 router.delete("/:id", asyncHandler(ProductController.deleteProduct));

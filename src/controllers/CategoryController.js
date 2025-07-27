@@ -49,6 +49,13 @@ export async function getCategoryById(req, res) {
 }
 
 export async function insertCategory(req, res) {
+  const { name } = req.body;
+  const existingCategory = await db.Category.findOne({ where: { name } });
+  if (existingCategory) {
+    return res.status(409).json({
+      message: "Category name already exists",
+    });
+  }
   const category = await db.Category.create(req.body);
   return res.status(201).json({
     message: "Insert category successfully",
@@ -58,6 +65,18 @@ export async function insertCategory(req, res) {
 
 export async function updateCategory(req, res) {
   const { id } = req.params;
+  const { name } = req.body;
+  if (name !== undefined) {
+    const existingCategory = await db.Category.findOne({
+      where: { name: name, id: { [db.Sequelize.Op.ne]: id } },
+    });
+
+    if (existingCategory) {
+      return res.status(409).json({
+        message: "Category Name is already exist",
+      });
+    }
+  }
   const updateCategory = await db.Category.update(req.body, {
     where: { id },
   });

@@ -14,6 +14,9 @@ npx sequelize-cli model:generate --name BannerDetail --attributes product_id:int
 npx sequelize-cli model:generate --name Feedback --attributes product_id:integer,user_id:integer,star:integer,comment:text
 npx sequelize-cli model:generate --name NewsDetail2 --attributes product_id:integer,news_id:integer
 npx sequelize-cli model:generate --name ProductImage --attributes product_id:integer,image:text
+npx sequelize-cli migration:generate --name add_session_to_orders
+npx sequelize-cli model:generate --name Cart --attributes session_id:string,user_id:integer
+npx sequelize-cli model:generate --name CartItem --attributes cart_id:integer,product_id:integer,quantity:integer
 
 Run Migration
 npx sequelize-cli db:migrate

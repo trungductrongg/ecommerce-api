@@ -10,6 +10,8 @@ import bannerDetailRoutes from "./routes/bannerdetail.routes.js";
 import bannerRoutes from "./routes/banner.routes.js";
 import imagesRoutes from "./routes/image.routes.js";
 import productImageRoutes from "./routes/productimages.routes.js";
+import CartRoutes from "./routes/cart.routes.js";
+import CartItemRoutes from "./routes/cartitem.routes.js";
 
 export function AppRoute(app) {
   const baseUrl = process.env.URL || "/api";
@@ -26,4 +28,6 @@ export function AppRoute(app) {
   app.use(`${baseUrl}/banner-details`, bannerDetailRoutes);
   app.use(`${baseUrl}/images`, imagesRoutes);
   app.use(`${baseUrl}/product-images`, productImageRoutes);
+  app.use(`${baseUrl}/cart`, CartRoutes);
+  app.use(`${baseUrl}/cart-item`, CartItemRoutes);
 }
